@@ -2,5 +2,33 @@
 @import "settings";
 
 body {
-  background-color: $background-color;
+	background-color: $background-color;
+}
+
+.background--primary {
+	background-color: $background-color;
+}
+
+.v-form {
+	.v-col {
+		padding: 6px;
+	}
+
+	.v-input__prepend {
+		margin-right: 6px;
+	}
+
+	.v-field {
+		&--variant-outlined input{
+			padding: 4px 6px;
+		}
+	}
+}
+
+.text-input-field {
+	&--right {
+		input {
+			text-align: right;
+		}
+	}
 }

@@ -4,7 +4,7 @@ const NEW_PLAYER = {
 	name: '',
 	startTime: null,
 	endTime: null,
-	food: 0,
+	food: null,
 	iceTea: false
 }
 export default {
@@ -20,6 +20,24 @@ export default {
 	computed: {
 		isDisableAddButton() {
 			return this.players.find(player => !(player.name && player.startTime && player.endTime)) && this.players.length;
+		},
+
+		playerCount() {
+			return this.players.length;
+		},
+
+		isAnyPlayerUseIceTea() {
+			return (this.players || []).some(player => player.iceTea);
+		}
+	},
+
+	watch: {
+		playerCount(value) {
+			this.$emit('on-player-list-change', value);
+		},
+
+		isAnyPlayerUseIceTea(value) {
+			this.$emit('on-ice-tea-usage-change', value);
 		}
 	},
 
@@ -27,78 +45,98 @@ export default {
 		addPlayer() {
 			this.players.push({
 				...NEW_PLAYER,
-				id: this.players.length + 1
+				id: Math.random().toString(16).slice(2)
 			})
+		},
+		removePlayer(index) {
+			this.players.splice(index, 1);
 		}
 	}
 };
 </script>
 
 <template>
-	<v-app>
-		<v-sheet class="player-details-list pb-2">
-			<v-form
-					v-for="(player, index) in players"
-					class="player-details-wrapper mb-6"
-					:key="index"
-			>
-				<v-text-field
-						v-model="player.name"
-						class="text-input-field mb-3"
-						:rules="[rules.required]"
-						autofocus
-						label="Tên người chơi"
-						prepend-icon="mdi-account-tie"
-						variant="plain"
-				></v-text-field>
+	<v-sheet class="background--primary pa-0">
+		<v-form
+			v-for="(player, index) in players"
+			class="player-details-wrapper"
+			:key="player.id"
+		>
+			<v-container>
+				<v-row>
+					<v-col cols="11">
+						<v-text-field
+							v-model="player.name"
+							class="text-input-field mb-3"
+							:rules="[rules.required]"
+							autofocus
+							label="Tên người chơi"
+							prepend-icon="mdi-account-tie"
+							variant="plain"
+						></v-text-field>
 
-				<v-divider class="mb-4" thickness="2" color="secondary"></v-divider>
+						<v-divider class="mb-4" thickness="2" color="secondary"></v-divider>
+					</v-col>
 
-				<div class="player-details">
-					<v-text-field
+					<v-col cols="1">
+						<v-icon icon="mdi-minus" color="red" @click="removePlayer(index)"></v-icon>
+					</v-col>
+
+					<v-col cols="5" offset="1">
+						<v-text-field
 							v-model="player.startTime"
 							class="text-input-field mb-3"
 							:rules="[rules.required]"
 							label="Giờ đến"
 							prepend-icon="mdi-clock-start"
 							type="time"
-					></v-text-field>
+						></v-text-field>
+					</v-col>
 
-					<v-text-field
+					<v-col cols="5">
+						<v-text-field
 							v-model="player.endTime"
 							class="text-input-field mb-3"
 							:rules="[rules.required]"
 							label="Giờ đi"
 							prepend-icon="mdi-clock-end"
 							type="time"
-					></v-text-field>
+						></v-text-field>
+					</v-col>
 
-					<v-text-field
+					<v-col cols="5" offset="1">
+						<v-text-field
 							v-model="player.food"
-							class="text-input-field mb-3"
+							class="text-input-field text-input-field--right text-right mb-3"
 							label="Đồ ăn"
 							prepend-icon="mdi-food"
-							suffix="₫"
+							suffix=".000 ₫"
 							type="number"
 							@focus="$event.target.select()"
-					></v-text-field>
+						></v-text-field>
+					</v-col>
 
-					<v-checkbox
+					<v-col cols="5">
+						<v-checkbox
 							v-model="player.iceTea"
-							:label="`Trà đá: ${player.iceTea ? 'Có' : 'Không'}`"
 							prepend-icon="mdi-beer-outline"
-					></v-checkbox>
-				</div>
-			</v-form>
-		</v-sheet>
+						>
+							<template #label>
+								<span class="text-no-wrap">Trà đá: {{ player.iceTea ? 'Có' : 'Không' }}</span>
+							</template>
+						</v-checkbox>
+					</v-col>
+				</v-row>
+			</v-container>
+		</v-form>
+	</v-sheet>
 
-		<div class="add-new-player py-2">
-			<v-btn variant="text" color="primary" @click="addPlayer" :disabled="isDisableAddButton">
-				<v-icon left>mdi-plus</v-icon>
-				Thêm người chơi
-			</v-btn>
-		</div>
-	</v-app>
+	<div class="add-new-player py-2">
+		<v-btn variant="text" color="primary" @click="addPlayer" :disabled="isDisableAddButton">
+			<v-icon left>mdi-plus</v-icon>
+			Thêm người chơi
+		</v-btn>
+	</div>
 </template>
 
 <style scoped lang="scss">
@@ -109,11 +147,6 @@ export default {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-}
-
-.player-details-list {
-	padding: 24px;
-	background-color: $background-color;
 }
 
 .player-details-wrapper {

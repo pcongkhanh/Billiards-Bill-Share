@@ -1,9 +1,96 @@
-<script setup>
+<script>
+export default {
+	name: 'PriceRateSection',
 
+	props: {
+		isAnyPlayer: {
+			type: Boolean,
+			default: false
+		},
+
+		isAnyPlayerUseIceTea: {
+			type: Boolean,
+			default: false
+		}
+	},
+
+	data: () => ({
+		rules: {
+			required: value => !!value || 'Không được để trống',
+			percentage: value => (value >= 0 && value <= 100) || 'Từ 0 - 100% thôi!',
+		},
+		rate: null,
+		iceTeaPrice: null,
+		discount: null,
+		isDiscountHourOnly: false
+	}),
+
+	computed: {},
+
+	methods: {}
+};
 </script>
 
 <template>
+	<v-sheet v-show="isAnyPlayer" class="background--primary pa-0">
+		<v-form>
+			<v-container>
+				<v-row>
+					<v-col>
+						<v-text-field
+							v-model="rate"
+							class="text-input-field text-input-field--right mb-3"
+							label="Giá giờ chơi"
+							prepend-icon="mdi-currency-usd"
+							:rules="[rules.required]"
+							suffix=".000 ₫"
+							type="number"
+						></v-text-field>
+					</v-col>
+				</v-row>
 
+				<v-row>
+					<v-col>
+						<v-text-field
+							v-show="isAnyPlayerUseIceTea"
+							v-model="iceTeaPrice"
+							class="text-input-field text-input-field--right mb-3"
+							label="Giá trà đá"
+							prepend-icon="mdi-cup-water"
+							suffix="%"
+							type="number"
+						></v-text-field>
+					</v-col>
+				</v-row>
+
+				<v-row>
+					<v-col>
+						<v-text-field
+							v-model="discount"
+							class="text-input-field text-input-field--right mb-3"
+							label="Giảm giá"
+							prepend-icon="mdi-sale-outline"
+							:rules="[rules.percentage]"
+							suffix="%"
+							type="number"
+						></v-text-field>
+					</v-col>
+
+					<v-col v-if="discount > 0">
+						<v-switch
+							v-model="isDiscountHourOnly"
+							color="primary"
+						>
+							<template #label>
+								<span class="text-no-wrap">Chỉ giờ chơi</span>
+							</template>
+						</v-switch>
+					</v-col>
+				</v-row>
+			</v-container>
+
+		</v-form>
+	</v-sheet>
 </template>
 
 <style scoped lang="scss">
