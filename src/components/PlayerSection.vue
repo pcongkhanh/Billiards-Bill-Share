@@ -59,7 +59,6 @@ export default {
 	<v-sheet class="background--primary pa-0">
 		<v-form
 			v-for="(player, index) in players"
-			class="player-details-wrapper"
 			:key="player.id"
 		>
 			<v-container>
@@ -67,7 +66,7 @@ export default {
 					<v-col cols="11">
 						<v-text-field
 							v-model="player.name"
-							class="text-input-field mb-3"
+							class="text-input-field mb-1"
 							:rules="[rules.required]"
 							autofocus
 							label="Tên người chơi"
@@ -75,7 +74,7 @@ export default {
 							variant="plain"
 						></v-text-field>
 
-						<v-divider class="mb-4" thickness="2" color="secondary"></v-divider>
+						<v-divider class="mb-2" thickness="2" color="secondary"></v-divider>
 					</v-col>
 
 					<v-col cols="1">
@@ -85,7 +84,7 @@ export default {
 					<v-col cols="5" offset="1">
 						<v-text-field
 							v-model="player.startTime"
-							class="text-input-field mb-3"
+							class="text-input-field"
 							:rules="[rules.required]"
 							label="Giờ đến"
 							prepend-icon="mdi-clock-start"
@@ -96,7 +95,7 @@ export default {
 					<v-col cols="5">
 						<v-text-field
 							v-model="player.endTime"
-							class="text-input-field mb-3"
+							class="text-input-field"
 							:rules="[rules.required]"
 							label="Giờ đi"
 							prepend-icon="mdi-clock-end"
@@ -107,7 +106,7 @@ export default {
 					<v-col cols="5" offset="1">
 						<v-text-field
 							v-model="player.food"
-							class="text-input-field text-input-field--right text-right mb-3"
+							class="text-input-field text-input-field--right text-right"
 							label="Đồ ăn"
 							prepend-icon="mdi-food"
 							suffix=".000 ₫"
@@ -147,15 +146,5 @@ export default {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-}
-
-.player-details-wrapper {
-	&:not(:last-child) {
-		margin-bottom: 12px;
-	}
-}
-
-.player-details {
-	padding-left: 12px;
 }
 </style>

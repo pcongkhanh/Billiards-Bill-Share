@@ -36,10 +36,10 @@ export default {
 		<v-form>
 			<v-container>
 				<v-row>
-					<v-col>
+					<v-col :cols="isAnyPlayerUseIceTea ? 6 : 12">
 						<v-text-field
 							v-model="rate"
-							class="text-input-field text-input-field--right mb-3"
+							class="text-input-field text-input-field--right"
 							label="Giá giờ chơi"
 							prepend-icon="mdi-currency-usd"
 							:rules="[rules.required]"
@@ -47,27 +47,22 @@ export default {
 							type="number"
 						></v-text-field>
 					</v-col>
-				</v-row>
 
-				<v-row>
-					<v-col>
+					<v-col v-if="isAnyPlayerUseIceTea" cols="6">
 						<v-text-field
-							v-show="isAnyPlayerUseIceTea"
 							v-model="iceTeaPrice"
-							class="text-input-field text-input-field--right mb-3"
+							class="text-input-field text-input-field--right"
 							label="Giá trà đá"
 							prepend-icon="mdi-cup-water"
 							suffix="%"
 							type="number"
 						></v-text-field>
 					</v-col>
-				</v-row>
 
-				<v-row>
-					<v-col>
+					<v-col :cols="discount > 0 ? 6 : 12">
 						<v-text-field
 							v-model="discount"
-							class="text-input-field text-input-field--right mb-3"
+							class="text-input-field text-input-field--right"
 							label="Giảm giá"
 							prepend-icon="mdi-sale-outline"
 							:rules="[rules.percentage]"
@@ -76,7 +71,7 @@ export default {
 						></v-text-field>
 					</v-col>
 
-					<v-col v-if="discount > 0">
+					<v-col v-if="discount > 0" cols="6">
 						<v-switch
 							v-model="isDiscountHourOnly"
 							color="primary"
