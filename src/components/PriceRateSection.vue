@@ -3,12 +3,12 @@ export default {
 	name: 'PriceRateSection',
 
 	props: {
-		isAnyPlayer: {
+		isAnyPlayerUseIceTea: {
 			type: Boolean,
 			default: false
 		},
 
-		isAnyPlayerUseIceTea: {
+		isAnyInvalidPlayer: {
 			type: Boolean,
 			default: false
 		}
@@ -25,14 +25,16 @@ export default {
 		isDiscountHourOnly: false
 	}),
 
-	computed: {},
-
-	methods: {}
+	computed: {
+		priceFullFilled() {
+			return this.rate && ((this.isAnyPlayerUseIceTea && this.iceTeaPrice) || !this.isAnyPlayerUseIceTea);
+		}
+	}
 };
 </script>
 
 <template>
-	<v-sheet v-show="isAnyPlayer" class="background--primary pa-0">
+	<v-sheet class="background--primary pa-0">
 		<v-form>
 			<v-container>
 				<v-row>
@@ -54,7 +56,7 @@ export default {
 							class="text-input-field text-input-field--right"
 							label="Giá trà đá"
 							prepend-icon="mdi-cup-water"
-							suffix="%"
+							suffix=".000 ₫"
 							type="number"
 						></v-text-field>
 					</v-col>
@@ -84,6 +86,16 @@ export default {
 				</v-row>
 			</v-container>
 
+			<v-container>
+				<v-row v-show="priceFullFilled && !isAnyInvalidPlayer" justify="center">
+					<v-btn
+						variant="tonal"
+						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, isDiscountHourOnly })"
+					>
+						Tính tiền
+					</v-btn>
+				</v-row>
+			</v-container>
 		</v-form>
 	</v-sheet>
 </template>

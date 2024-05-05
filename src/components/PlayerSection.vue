@@ -7,47 +7,36 @@ const NEW_PLAYER = {
 	food: null,
 	iceTea: false
 }
+
 export default {
 	name: 'PlayerSection',
+
+	props: {
+		players: {
+			type: Array,
+			default: () => ([])
+		},
+
+		isAddPlayerDisabled: {
+			type: Boolean,
+			default: false
+		}
+	},
 
 	data: () => ({
 		rules: {
 			required: value => !!value || 'Không được để trống',
-		},
-		players: []
+		}
 	}),
-
-	computed: {
-		isDisableAddButton() {
-			return this.players.find(player => !(player.name && player.startTime && player.endTime)) && this.players.length;
-		},
-
-		playerCount() {
-			return this.players.length;
-		},
-
-		isAnyPlayerUseIceTea() {
-			return (this.players || []).some(player => player.iceTea);
-		}
-	},
-
-	watch: {
-		playerCount(value) {
-			this.$emit('on-player-list-change', value);
-		},
-
-		isAnyPlayerUseIceTea(value) {
-			this.$emit('on-ice-tea-usage-change', value);
-		}
-	},
 
 	methods: {
 		addPlayer() {
 			this.players.push({
 				...NEW_PLAYER,
 				id: Math.random().toString(16).slice(2)
-			})
+			});
 		},
+
 		removePlayer(index) {
 			this.players.splice(index, 1);
 		}
@@ -131,8 +120,13 @@ export default {
 	</v-sheet>
 
 	<div class="add-new-player py-2">
-		<v-btn variant="text" color="primary" @click="addPlayer" :disabled="isDisableAddButton">
-			<v-icon left>mdi-plus</v-icon>
+		<v-btn
+			:disabled="isAddPlayerDisabled"
+			color="primary"
+			prepend-icon="mdi-plus"
+			variant="text"
+			@click="addPlayer"
+		>
 			Thêm người chơi
 		</v-btn>
 	</div>

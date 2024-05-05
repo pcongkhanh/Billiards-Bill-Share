@@ -2,6 +2,7 @@
 import HeaderBar from '@/components/HeaderBar.vue';
 import PlayerSection from '@/components/PlayerSection.vue';
 import PriceRateSection from "@/components/PriceRateSection.vue";
+import ResultSection from "@/components/ResultSection.vue";
 
 export default {
 	name: 'App',
@@ -9,21 +10,31 @@ export default {
 	components: {
 		HeaderBar,
 		PlayerSection,
-		PriceRateSection
+		PriceRateSection,
+		ResultSection
 	},
 
 	data: () => ({
-		isAnyPlayer: false,
-		isAnyPlayerUseIceTea: false
+		players: []
 	}),
 
-	methods: {
-		onPlayerListChange(playerCount) {
-			this.isAnyPlayer = playerCount > 0;
+	computed: {
+		isAnyPlayer() {
+			return this.players.length > 0;
 		},
 
-		onIceTeaUsageChange(isUse) {
-			this.isAnyPlayerUseIceTea = isUse;
+		isAnyInvalidPlayer() {
+			return this.players.find(player => !(player.name && player.startTime && player.endTime)) && this.isAnyPlayer;
+		},
+
+		isAnyPlayerUseIceTea() {
+			return (this.players || []).some(player => player.iceTea);
+		}
+	},
+
+	methods: {
+		onPriceRateUpdated() {
+
 		}
 	}
 }
@@ -33,14 +44,14 @@ export default {
 	<v-app>
 		<v-main>
 			<HeaderBar></HeaderBar>
-			<PlayerSection
-				@on-player-list-change="onPlayerListChange"
-				@on-ice-tea-usage-change="onIceTeaUsageChange"
-			></PlayerSection>
+			<PlayerSection ref="playerSection" :players="players" :is-add-player-disabled="isAnyInvalidPlayer">
+			</PlayerSection>
 			<PriceRateSection
-				:is-any-player="isAnyPlayer"
+				v-show="isAnyPlayer"
 				:is-any-player-use-ice-tea="isAnyPlayerUseIceTea"
+				:is-any-invalid-player="isAnyInvalidPlayer"
 			></PriceRateSection>
+			<ResultSection :players="players"></ResultSection>
 		</v-main>
 	</v-app>
 </template>
