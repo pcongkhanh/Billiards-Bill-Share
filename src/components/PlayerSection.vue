@@ -25,7 +25,7 @@ export default {
 
 	data: () => ({
 		rules: {
-			required: value => !!value || 'Không được để trống',
+			required: value => !!value || 'Thiếu kìa',
 		}
 	}),
 

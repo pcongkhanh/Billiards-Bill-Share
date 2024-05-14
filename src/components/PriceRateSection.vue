@@ -19,7 +19,7 @@ export default {
 			required: value => !!value || 'Không được để trống',
 			percentage: value => (value >= 0 && value <= 100) || 'Từ 0 - 100% thôi!',
 		},
-		rate: null,
+		rate: 75,
 		iceTeaPrice: null,
 		discount: null,
 		isDiscountHourOnly: false
