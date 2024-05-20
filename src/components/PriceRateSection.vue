@@ -22,7 +22,7 @@ export default {
 		rate: 75,
 		iceTeaPrice: null,
 		discount: null,
-		isDiscountHourOnly: false
+		isDiscountPlayTimeOnly: false
 	}),
 
 	computed: {
@@ -75,7 +75,7 @@ export default {
 
 					<v-col v-if="discount > 0" cols="6">
 						<v-switch
-							v-model="isDiscountHourOnly"
+							v-model="isDiscountPlayTimeOnly"
 							color="primary"
 						>
 							<template #label>
@@ -90,7 +90,7 @@ export default {
 				<v-row v-show="priceFullFilled && !isAnyInvalidPlayer" justify="center">
 					<v-btn
 						variant="tonal"
-						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, isDiscountHourOnly })"
+						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, isDiscountPlayTimeOnly })"
 					>
 						Tính tiền
 					</v-btn>

@@ -67,7 +67,7 @@ export default {
 					</v-col>
 
 					<v-col cols="1">
-						<v-icon icon="mdi-minus" color="red" @click="removePlayer(index)"></v-icon>
+						<v-icon icon="mdi-trash-can-outline" color="red" @click="removePlayer(index)"></v-icon>
 					</v-col>
 
 					<v-col cols="5" offset="1">

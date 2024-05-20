@@ -5,6 +5,8 @@ import PriceRateSection from "@/components/PriceRateSection.vue";
 import ResultSection from "@/components/ResultSection.vue";
 
 import moment from 'moment';
+import {toRaw} from 'vue';
+import {de} from "vuetify/locale";
 
 export default {
 	name: 'App',
@@ -71,8 +73,27 @@ export default {
 
 	methods: {
 		onCalculate(calculateInfo) {
-			const periodPlayTime = this.dividePlayTime();
-			console.log(periodPlayTime);
+			const {iceTeaPrice, rate, discount, isDiscountPlayTimeOnly} = calculateInfo;
+			const unCalculatedPlayTimePeriods = this.dividePlayTime();
+			const playTimePeriods = this.calculatePlayTimePeriods(rate, unCalculatedPlayTimePeriods);
+			const playerUseIceTeaAmount = (this.players || []).filter(player => player.iceTea)?.length || 0;
+
+			this.players.forEach(player => {
+				let timeCharge, iceTeaCharge, foodCharge;
+				timeCharge = this.calculatePlayerTimeCharge(player, playTimePeriods);
+
+				if (playerUseIceTeaAmount > 0) {
+					iceTeaCharge = this.calculateIceTeaCharge(player, playerUseIceTeaAmount, iceTeaPrice);
+				}
+
+				timeCharge = Number(timeCharge || 0) || 0;
+				iceTeaCharge = Number(iceTeaCharge || 0) || 0;
+				foodCharge = Number(player.food || 0) || 0;
+
+				const chargeInfo = {timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly};
+
+				player.charge = this.calculateFinalCharge(chargeInfo);
+			});
 		},
 
 		dividePlayTime() {
@@ -125,6 +146,42 @@ export default {
 
 		momentValue(value) {
 			return moment(value, "HH:mm");
+		},
+
+		calculatePlayTimePeriods(rate, periodPlayTime) {
+			return periodPlayTime.map(period => {
+				const playerAmount = period.players?.length || 0;
+				const periodCharge = (rate || 0) * period.duration;
+				const players = (period.players || []).map(player => ({
+					...player,
+					charge: periodCharge / playerAmount
+				}));
+
+				return {...period, players};
+			});
+		},
+
+		calculatePlayerTimeCharge(player, playTimePeriods) {
+			return playTimePeriods.reduce((total, period) => {
+				let playerInPeriod = period.players.find(periodPlayer => periodPlayer.id === player.id);
+				if (playerInPeriod) {
+					return total + playerInPeriod.charge;
+				}
+				return total;
+			}, 0);
+		},
+
+		calculateIceTeaCharge(player, playerUseIceTeaAmount, iceTeaPrice) {
+			return player.iceTea ? iceTeaPrice / playerUseIceTeaAmount : 0
+		},
+
+		calculateFinalCharge({timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly}) {
+			const payPercentage = ((100 - Number(discount)) / 100) || 1;
+			if (isDiscountPlayTimeOnly) {
+				return timeCharge * payPercentage + iceTeaCharge + foodCharge;
+			} else {
+				return (timeCharge + iceTeaCharge + foodCharge) * payPercentage;
+			}
 		}
 	}
 }
