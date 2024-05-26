@@ -9,6 +9,15 @@ export default {
 		}
 	},
 
+	data() {
+		return {
+			resultHeaders: [
+				{ value: 'name', align: 'start' },
+				{ value: 'charge', align: 'end' }
+			]
+		};
+	},
+
 	computed: {
 		playersTableData() {
 			return (this.players || []).map(player => {
@@ -19,31 +28,37 @@ export default {
 			});
 		},
 
+		totalCost() {
+			return (this.players || []).reduce((sum, player) => {
+				return sum + (player?.charge || 0);
+			}, 0);
+		},
+
+		formatedTotalCost() {
+			return this.formatCurrencyVND(this.totalCost)
+		},
+
 		resultTableData() {
-			return this.playersTableData.concat({ name: 'Tổng', charge: this.calculateTotalCost() });
+			return this.playersTableData.concat({ name: 'Tổng', charge: this.formatedTotalCost });
 		}
 	},
 
 	methods: {
 		formatCurrencyVND(number) {
 			return (number * 1000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-		},
-
-		calculateTotalCost() {
-			return this.formatCurrencyVND(this.players.reduce((sum, player) => {
-				return sum + (player?.charge || 0);
-			}, 0));
 		}
 	}
 };
 </script>
 
 <template>
-	<v-container>
+	<v-container class="pa-0 pb-4">
 		<v-data-table
+			v-if="totalCost"
+			class="result-table background--transparent"
+			:headers="resultHeaders"
 			:items="resultTableData"
 			:items-per-page="tableData?.length"
-			hide-no-data
 		>
 			<template #headers></template>
 			<template #bottom></template>
@@ -51,6 +66,17 @@ export default {
 	</v-container>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
+@import "@/styles/main.scss";
 
+.result-table {
+	.v-table__wrapper {
+		.v-data-table__tr:not(:last-child) {
+			.v-data-table__td,
+			.v-data-table__th {
+				border-bottom: 1px solid $primary-color !important;
+			}
+		}
+	}
+}
 </style>

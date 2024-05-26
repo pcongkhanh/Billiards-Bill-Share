@@ -9,6 +9,10 @@ body {
 	background-color: $background-color;
 }
 
+.background--transparent {
+	background-color: transparent;
+}
+
 .v-form {
 	.v-col {
 		padding: 6px;
@@ -19,7 +23,7 @@ body {
 	}
 
 	.v-field {
-		&--variant-outlined input{
+		&--variant-outlined input {
 			padding: 4px 6px;
 		}
 	}

@@ -37,7 +37,7 @@ export default {
 	},
 
 	mounted() {
-		this.clonePlayers();
+		// this.clonePlayers();
 	},
 
 	methods: {
@@ -76,7 +76,7 @@ export default {
 			];
 		},
 		onCalculate(calculateInfo) {
-			const { iceTeaPrice, rate, discount, isDiscountPlayTimeOnly } = calculateInfo;
+			const { iceTeaPrice, rate, discount, foodDiscount, isDiscountPrivatelyForFood } = calculateInfo;
 			const unCalculatedPlayTimePeriods = this.dividePlayTime();
 			const playTimePeriods = this.calculatePlayTimePeriods(rate, unCalculatedPlayTimePeriods);
 			const playerUseIceTeaAmount = (this.players || []).filter(player => player.iceTea)?.length || 0;
@@ -93,9 +93,26 @@ export default {
 				iceTeaCharge = Number(iceTeaCharge || 0) || 0;
 				foodCharge = Number(player.food || 0) || 0;
 
-				const chargeInfo = { timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly };
+				const chargeInfo = {
+					timeCharge,
+					iceTeaCharge,
+					foodCharge,
+					discount,
+					foodDiscount,
+					isDiscountPrivatelyForFood
+				};
 
 				player.charge = this.calculateFinalCharge(chargeInfo);
+			});
+
+			this.$nextTick(() => {
+				const resultSection = this.$refs.resultSection;
+				if (resultSection) {
+					resultSection.$el.scrollIntoView({
+						behavior: 'smooth',
+						block: 'end'
+					});
+				}
 			});
 		},
 
@@ -178,10 +195,18 @@ export default {
 			return player.iceTea ? iceTeaPrice / playerUseIceTeaAmount : 0;
 		},
 
-		calculateFinalCharge({ timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly }) {
+		calculateFinalCharge({
+			timeCharge,
+			iceTeaCharge,
+			foodCharge,
+			discount,
+			foodDiscount,
+			isDiscountPrivatelyForFood
+		}) {
 			const payPercentage = ((100 - Number(discount)) / 100) || 1;
-			if (isDiscountPlayTimeOnly) {
-				return timeCharge * payPercentage + iceTeaCharge + foodCharge;
+			const foodPayPercentage = ((100 - Number(foodDiscount)) / 100) || 1;
+			if (isDiscountPrivatelyForFood) {
+				return (timeCharge * payPercentage) + (iceTeaCharge + foodCharge) * foodPayPercentage;
 			} else {
 				return (timeCharge + iceTeaCharge + foodCharge) * payPercentage;
 			}
@@ -202,7 +227,7 @@ export default {
 				:is-any-invalid-player="isAnyInvalidPlayer"
 				@on-calculate="onCalculate"
 			></PriceRateSection>
-			<ResultSection :players="players"></ResultSection>
+			<ResultSection ref="resultSection" :players="players"></ResultSection>
 		</v-main>
 	</v-app>
 </template>

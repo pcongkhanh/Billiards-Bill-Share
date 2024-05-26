@@ -1,4 +1,6 @@
 <script>
+import { ru } from 'vuetify/locale';
+
 export default {
 	name: 'PriceRateSection',
 
@@ -16,13 +18,14 @@ export default {
 
 	data: () => ({
 		rules: {
-			required: value => !!value || 'Không được để trống',
+			required: value => !!value || 'Nhập giá vào',
 			percentage: value => (value >= 0 && value <= 100) || 'Từ 0 - 100% thôi!'
 		},
 		rate: 75,
 		iceTeaPrice: null,
 		discount: null,
-		isDiscountPlayTimeOnly: false
+		foodDiscount: 0,
+		isDiscountPrivatelyForFood: false
 	}),
 
 	computed: {
@@ -42,9 +45,9 @@ export default {
 						<v-text-field
 							v-model="rate"
 							class="text-input-field text-input-field--right"
+							:rules="[rules.required]"
 							label="Giá giờ chơi"
 							prepend-icon="mdi-currency-usd"
-							:rules="[rules.required]"
 							suffix=".000 ₫"
 							type="number"
 						></v-text-field>
@@ -54,18 +57,19 @@ export default {
 						<v-text-field
 							v-model="iceTeaPrice"
 							class="text-input-field text-input-field--right"
+							:rules="[rules.required]"
 							label="Giá trà đá"
-							prepend-icon="mdi-cup-water"
+							prepend-icon="mdi-currency-usd"
 							suffix=".000 ₫"
 							type="number"
 						></v-text-field>
 					</v-col>
 
-					<v-col :cols="discount > 0 ? 6 : 12">
+					<v-col :cols="isDiscountPrivatelyForFood ? 6 : 12">
 						<v-text-field
 							v-model="discount"
 							class="text-input-field text-input-field--right"
-							label="Giảm giá"
+							:label="isDiscountPrivatelyForFood ? 'Giờ chơi' : 'Khuyến mãi'"
 							prepend-icon="mdi-sale-outline"
 							:rules="[rules.percentage]"
 							suffix="%"
@@ -73,13 +77,28 @@ export default {
 						></v-text-field>
 					</v-col>
 
-					<v-col v-if="discount > 0" cols="6">
+					<v-col v-if="isDiscountPrivatelyForFood" cols="6">
+						<v-text-field
+							v-model="foodDiscount"
+							class="text-input-field text-input-field--right"
+							label="Đồ ăn / uống"
+							prepend-icon="mdi-sale-outline"
+							:rules="[rules.percentage]"
+							suffix="%"
+							type="number"
+						></v-text-field>
+					</v-col>
+
+					<v-col cols="12">
 						<v-switch
-							v-model="isDiscountPlayTimeOnly"
+							v-model="isDiscountPrivatelyForFood"
+							class="px-2"
+							hide-details
+							density="compact"
 							color="primary"
 						>
 							<template #label>
-								<span class="text-no-wrap">Chỉ giờ chơi</span>
+								<span class="text-no-wrap">Khuyến mãi riêng đồ ăn / uống</span>
 							</template>
 						</v-switch>
 					</v-col>
@@ -90,7 +109,7 @@ export default {
 				<v-row v-show="priceFullFilled && !isAnyInvalidPlayer" class="py-4" justify="center">
 					<v-btn
 						variant="tonal"
-						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, isDiscountPlayTimeOnly })"
+						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, foodDiscount, isDiscountPrivatelyForFood })"
 					>
 						Tính tiền
 					</v-btn>
@@ -99,7 +118,3 @@ export default {
 		</v-form>
 	</v-sheet>
 </template>
-
-<style scoped lang="scss">
-
-</style>
