@@ -17,7 +17,7 @@ export default {
 	data: () => ({
 		rules: {
 			required: value => !!value || 'Không được để trống',
-			percentage: value => (value >= 0 && value <= 100) || 'Từ 0 - 100% thôi!',
+			percentage: value => (value >= 0 && value <= 100) || 'Từ 0 - 100% thôi!'
 		},
 		rate: 75,
 		iceTeaPrice: null,
@@ -87,7 +87,7 @@ export default {
 			</v-container>
 
 			<v-container>
-				<v-row v-show="priceFullFilled && !isAnyInvalidPlayer" justify="center">
+				<v-row v-show="priceFullFilled && !isAnyInvalidPlayer" class="py-4" justify="center">
 					<v-btn
 						variant="tonal"
 						@click="$emit('on-calculate', { rate, iceTeaPrice, discount, isDiscountPlayTimeOnly })"

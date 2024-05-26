@@ -1,12 +1,12 @@
 <script>
 import HeaderBar from '@/components/HeaderBar.vue';
 import PlayerSection from '@/components/PlayerSection.vue';
-import PriceRateSection from "@/components/PriceRateSection.vue";
-import ResultSection from "@/components/ResultSection.vue";
+import PriceRateSection from '@/components/PriceRateSection.vue';
+import ResultSection from '@/components/ResultSection.vue';
 
 import moment from 'moment';
-import {toRaw} from 'vue';
-import {de} from "vuetify/locale";
+import { toRaw } from 'vue';
+import { de } from 'vuetify/locale';
 
 export default {
 	name: 'App',
@@ -37,43 +37,46 @@ export default {
 	},
 
 	mounted() {
-		this.players = [
-			{
-				id: Math.random().toString(16).slice(2),
-				startTime: "13:00",
-				endTime: "17:15",
-				name: 'Khanh'
-			},
-			{
-				id: Math.random().toString(16).slice(2),
-				startTime: "15:00",
-				endTime: "16:00",
-				name: 'Hạnh'
-			},
-			{
-				id: Math.random().toString(16).slice(2),
-				startTime: "14:15",
-				endTime: "17:15",
-				name: 'Chung'
-			},
-			{
-				id: Math.random().toString(16).slice(2),
-				startTime: "14:15",
-				endTime: "17:15",
-				name: 'Linh'
-			},
-			{
-				id: Math.random().toString(16).slice(2),
-				startTime: "13:30",
-				endTime: "17:15",
-				name: 'Trường'
-			}
-		]
+		this.clonePlayers();
 	},
 
 	methods: {
+		clonePlayers() {
+			this.players = [
+				{
+					id: Math.random().toString(16).slice(2),
+					startTime: '13:00',
+					endTime: '17:15',
+					name: 'Khanh'
+				},
+				{
+					id: Math.random().toString(16).slice(2),
+					startTime: '15:00',
+					endTime: '16:00',
+					name: 'Hạnh'
+				},
+				{
+					id: Math.random().toString(16).slice(2),
+					startTime: '14:15',
+					endTime: '17:15',
+					name: 'Chung'
+				},
+				{
+					id: Math.random().toString(16).slice(2),
+					startTime: '14:15',
+					endTime: '17:15',
+					name: 'Linh'
+				},
+				{
+					id: Math.random().toString(16).slice(2),
+					startTime: '13:30',
+					endTime: '17:15',
+					name: 'Trường'
+				}
+			];
+		},
 		onCalculate(calculateInfo) {
-			const {iceTeaPrice, rate, discount, isDiscountPlayTimeOnly} = calculateInfo;
+			const { iceTeaPrice, rate, discount, isDiscountPlayTimeOnly } = calculateInfo;
 			const unCalculatedPlayTimePeriods = this.dividePlayTime();
 			const playTimePeriods = this.calculatePlayTimePeriods(rate, unCalculatedPlayTimePeriods);
 			const playerUseIceTeaAmount = (this.players || []).filter(player => player.iceTea)?.length || 0;
@@ -90,7 +93,7 @@ export default {
 				iceTeaCharge = Number(iceTeaCharge || 0) || 0;
 				foodCharge = Number(player.food || 0) || 0;
 
-				const chargeInfo = {timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly};
+				const chargeInfo = { timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly };
 
 				player.charge = this.calculateFinalCharge(chargeInfo);
 			});
@@ -98,7 +101,7 @@ export default {
 
 		dividePlayTime() {
 			const timeSlots = this.generateTimeSlots(this.players);
-			return timeSlots.map(timeSlot => ({...timeSlot, players: this.findPlayersInTime(timeSlot)}));
+			return timeSlots.map(timeSlot => ({ ...timeSlot, players: this.findPlayersInTime(timeSlot) }));
 		},
 
 		generateTimeSlots(timeIntervals) {
@@ -109,13 +112,13 @@ export default {
 			return sortedTimeMarks.slice(0, -1).map((start, index) => {
 				const end = sortedTimeMarks[index + 1];
 				const duration = moment.duration(this.momentValue(end).diff(this.momentValue(start))).asHours();
-				return {start, end, duration};
+				return { start, end, duration };
 			});
 		},
 
 		getTimeMarks(timeIntervals) {
 			return timeIntervals.reduce((acc, interval) => {
-				return acc.concat([this.momentValue(interval.startTime), this.momentValue(interval.endTime)]);
+				return acc.concat([ this.momentValue(interval.startTime), this.momentValue(interval.endTime) ]);
 			}, []);
 		},
 
@@ -128,7 +131,7 @@ export default {
 		},
 
 		getSortedTimeMarks(distinctTimeMarks) {
-			return distinctTimeMarks.sort((a, b) => a - b).map(momentTime => moment(momentTime).format("HH:mm"));
+			return distinctTimeMarks.sort((a, b) => a - b).map(momentTime => moment(momentTime).format('HH:mm'));
 		},
 
 		findPlayersInTime(timeSlot) {
@@ -141,11 +144,11 @@ export default {
 				const isEndSameOfBefore = endOfTimeSlot.isSameOrBefore(playerEndTime);
 
 				return isStartSameOfAfter && isEndSameOfBefore;
-			})
+			});
 		},
 
 		momentValue(value) {
-			return moment(value, "HH:mm");
+			return moment(value, 'HH:mm');
 		},
 
 		calculatePlayTimePeriods(rate, periodPlayTime) {
@@ -157,7 +160,7 @@ export default {
 					charge: periodCharge / playerAmount
 				}));
 
-				return {...period, players};
+				return { ...period, players };
 			});
 		},
 
@@ -172,10 +175,10 @@ export default {
 		},
 
 		calculateIceTeaCharge(player, playerUseIceTeaAmount, iceTeaPrice) {
-			return player.iceTea ? iceTeaPrice / playerUseIceTeaAmount : 0
+			return player.iceTea ? iceTeaPrice / playerUseIceTeaAmount : 0;
 		},
 
-		calculateFinalCharge({timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly}) {
+		calculateFinalCharge({ timeCharge, iceTeaCharge, foodCharge, discount, isDiscountPlayTimeOnly }) {
 			const payPercentage = ((100 - Number(discount)) / 100) || 1;
 			if (isDiscountPlayTimeOnly) {
 				return timeCharge * payPercentage + iceTeaCharge + foodCharge;
@@ -184,7 +187,7 @@ export default {
 			}
 		}
 	}
-}
+};
 </script>
 
 <template>
