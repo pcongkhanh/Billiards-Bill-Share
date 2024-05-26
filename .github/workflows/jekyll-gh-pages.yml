@@ -28,7 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Upload source code
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: source-code
           path: .
@@ -38,7 +38,7 @@ jobs:
     needs: [ checkout ]
     steps:
       - name: Download source code
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: source-code
       - name: Set up Node
@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: './dist'
@@ -64,7 +64,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: ./dist
